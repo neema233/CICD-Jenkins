@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+    
+    parameters {
+        choice(name: 'env', choices: ['prod', 'dev', 'test'], description: 'Select environment')
+    }
+    
+    stages {
+        stage('Stage 1') {
+            parallel {
+                stage('Job A') {
+                    steps {
+                        echo 'Running Job A'
+                    }
+                }
+                stage('Job B') {
+                    steps {
+                        echo 'Running Job B'
+                    }
+                }
+            }
+        }
+        
+        stage('Stage 2') {
+            parallel {
+                stage('Job C') {
+                    steps {
+                        echo 'Running Job C'
+                    }
+                }
+                stage('Job D') {
+                    steps {
+                        echo 'Running Job D'
+                    }
+                }
+            }
+        }
+        
+        stage('Stage 3') {
+            when {
+                    branch 'main'
+            }
+            steps {
+                echo 'We run this stage on "main" branch only'
+            }
+        }
+        
+        stage('Stage 4') {
+            when {
+                expression {
+                    return params.env == 'prod'
+                }
+            }
+            steps {
+                echo 'Running Stage 4 because env=prod'
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Happy build!'
+        }
+    }
+}

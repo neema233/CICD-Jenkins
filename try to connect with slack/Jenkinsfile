@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building..'
+            
+            }
+        }
+    }
+    
+    post {
+        success {
+            slackSend channel: '#iti-task', message: 'Happy build!'
+        }
+        failure {
+            slackSend channel: '#iti-task', message: 'Build failed.'
+        }
+    }
+}
